@@ -1,8 +1,9 @@
 {
   "name": "look-ahead-store",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Simple look ahead key value store",
   "main": "dist/lookAheadFactory.js",
+  "types": "dist/lookAheadFactory.d.ts",
   "repository": "git@github.com:robwatkin/look-ahead-store.git",
   "author": "Rob Watkin <robwatkin@gmail.com>",
   "license": "Apache License 2.0",
