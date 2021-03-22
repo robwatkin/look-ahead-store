@@ -1,0 +1,24 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "allowJs": true,
+    "module": "commonjs",
+    "lib": ["ESNext"],
+    "target": "ES2018",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "declaration": true,
+    "plugins": [
+      { "transform": "typescript-is/lib/transform-inline/transformer" }
+    ]
+  },
+  "exclude": ["node_modules/", "test/*.test.ts"],
+  "include": ["src/*.ts", "src/**/*.ts", "src/*.js", "src/**/*.js"]
+}
