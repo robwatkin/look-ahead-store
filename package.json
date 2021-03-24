@@ -4,7 +4,7 @@
   "description": "Simple look ahead key value store",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "repository": "git@github.com:robwatkin/look-ahead-store.git",
+  "repository": "https://github.com/robwatkin/look-ahead-store.git",
   "author": "Rob Watkin <robwatkin@gmail.com>",
   "license": "Apache License 2.0",
   "files": [
