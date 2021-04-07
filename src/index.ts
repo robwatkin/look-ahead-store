@@ -1,41 +1,32 @@
-// type ResolveMethod = new (value: string | PromiseLike<string>) => void;
+import { EventEmitter } from "events";
 
-interface Store extends Record<string, unknown> {
-  [index: string]: unknown | ((value: unknown | PromiseLike<unknown>) => void);
-}
-
-export class LookAheadStore<V> {
-  public store: Store;
-
+export class LookAheadStore<K extends string, V> {
+  public store: Map<K, V>;
+  private eventBus: EventEmitter;
   constructor() {
-    this.store = {};
+    this.store = new Map();
+    this.eventBus = new EventEmitter();
   }
 
-  public put(key: string, value: V): void {
+  public put(key: K, value: V): void {
     if (value === undefined) {
       throw new Error(`LookAheadStore.put id: ${key} value is undefined`);
     }
 
-    if (this.store[key]) {
-      if (typeof this.store[key] === "string") {
-        throw new Error(`key [${key}] already in store`);
-      } else {
-        const resolve = this.store[key] as (value: V | PromiseLike<V>) => void;
-        resolve(value);
-      }
+    if (this.store.has(key)) {
+      throw new Error(`key [${key}] already in store`);
+    } else {
+      this.store.set(key, value);
+      this.eventBus.emit(key, value);
     }
-    this.store[key] = value;
   }
 
-  public async get(key: string): Promise<V> {
-    if (typeof this.store[key] === "string") {
-      return this.store[key] as V;
-    }
-    if (this.store[key]) {
-      return this.store[key] as Promise<V>;
+  public async get(key: K): Promise<V> {
+    if (this.store.has(key)) {
+      return this.store.get(key) as V;
     } else {
-      return new Promise<V>(resolve => {
-        this.store[key] = resolve;
+      return new Promise(resolve => {
+        this.eventBus.once(key, resolve);
       });
     }
   }
