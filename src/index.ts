@@ -29,16 +29,14 @@ export class LookAheadStore<V> {
 
   public async get(key: string): Promise<V> {
     if (typeof this.store[key] === "string") {
-      // console.log("byKey[key] typeof string");
+      return this.store[key] as V;
+    }
+    if (this.store[key]) {
+      return this.store[key] as Promise<V>;
+    } else {
       return new Promise<V>(resolve => {
-        // console.log(`------------ resolve ${key} :: ${byKey[key]}`);
-        resolve(this.store[key] as V);
+        this.store[key] = resolve;
       });
     }
-
-    return new Promise<V>(resolve => {
-      // console.log("+++++++++++++");
-      this.store[key] = resolve;
-    });
   }
 }
