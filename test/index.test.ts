@@ -1,25 +1,25 @@
-import { lookAheadFactory } from "../src/index";
+import { LookAheadStore } from "../src/index";
 
 test("adds and retreives one value", async () => {
-  const idToUuid = lookAheadFactory();
+  const idToUuid = new LookAheadStore<string>();
 
-  idToUuid.putValue(1, "one");
+  idToUuid.put("1", "one");
 
-  const value = await idToUuid.getValue(1);
+  const value = await idToUuid.get("1");
 
   expect(value).toBe("one");
 });
 
 test("adds and retreives several values", async () => {
-  const idToUuid = lookAheadFactory();
+  const idToUuid = new LookAheadStore<string>();
 
-  idToUuid.putValue(1, "one");
-  idToUuid.putValue(2, "two");
-  idToUuid.putValue(3, "three");
+  idToUuid.put("1", "one");
+  idToUuid.put("2", "two");
+  idToUuid.put("3", "three");
 
-  const value1 = await idToUuid.getValue(1);
-  const value2 = await idToUuid.getValue(2);
-  const value3 = await idToUuid.getValue(3);
+  const value1 = await idToUuid.get("1");
+  const value2 = await idToUuid.get("2");
+  const value3 = await idToUuid.get("3");
 
   expect(value1).toBe("one");
   expect(value2).toBe("two");
@@ -27,32 +27,32 @@ test("adds and retreives several values", async () => {
 });
 
 test("retreives then adds one value", async () => {
-  const idToUuid = lookAheadFactory();
+  const idToUuid = new LookAheadStore<string>();
 
-  idToUuid.getValue(1).then(value => {
+  idToUuid.get("1").then(value => {
     expect(value).toBe("one");
   });
 
-  idToUuid.putValue(1, "one");
+  idToUuid.put("1", "one");
 });
 
 test("retreives then adds several value", async () => {
-  const idToUuid = lookAheadFactory();
+  const idToUuid = new LookAheadStore<string>();
 
-  idToUuid.getValue(1).then(value => {
+  idToUuid.get("1").then(value => {
     expect(value).toBe("one");
   });
 
-  idToUuid.putValue(1, "one");
-  idToUuid.putValue(2, "two");
+  idToUuid.put("1", "one");
+  idToUuid.put("2", "two");
 
-  idToUuid.getValue(2).then(value => {
+  idToUuid.get("2").then(value => {
     expect(value).toBe("two");
   });
 
-  idToUuid.getValue(3).then(value => {
+  idToUuid.get("3").then(value => {
     expect(value).toBe("three");
   });
 
-  idToUuid.putValue(3, "three");
+  idToUuid.put("3", "three");
 });

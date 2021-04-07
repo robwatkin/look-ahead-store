@@ -1,46 +1,44 @@
 // type ResolveMethod = new (value: string | PromiseLike<string>) => void;
 
-interface LookAhead extends Record<string, unknown> {
-  putValue: (key: number, value: string) => void;
-  getValue: (key: number) => Promise<string>;
+interface Store extends Record<string, unknown> {
+  [index: string]: unknown | ((value: unknown | PromiseLike<unknown>) => void);
 }
 
-interface LookAheadStore extends Record<string, unknown> {
-  [index: number]: string | ((value: string | PromiseLike<string>) => void);
-}
+export class LookAheadStore<V> {
+  public store: Store;
 
-export const lookAheadFactory = (): LookAhead => {
-  const byKey: LookAheadStore = {};
+  constructor() {
+    this.store = {};
+  }
 
-  const putValue = (key: number, value: string) => {
-    // console.log(`putValue ${key} :: ${value}`);
-    if (byKey[key]) {
-      if (typeof byKey[key] === 'string') {
+  public put(key: string, value: V): void {
+    if (value === undefined) {
+      throw new Error(`LookAheadStore.put id: ${key} value is undefined`);
+    }
+
+    if (this.store[key]) {
+      if (typeof this.store[key] === "string") {
         throw new Error(`key [${key}] already in store`);
       } else {
-        const resolve = byKey[key] as (value: string | PromiseLike<string>) => void;
+        const resolve = this.store[key] as (value: V | PromiseLike<V>) => void;
         resolve(value);
       }
     }
-    byKey[key] = value;
-  };
+    this.store[key] = value;
+  }
 
-  const getValue = (key: number): Promise<string> => {
-    // console.log(`getValue key: ${key} byKey[key]: ${byKey[key]}`);
-
-    if (typeof byKey[key] === 'string') {
+  public async get(key: string): Promise<V> {
+    if (typeof this.store[key] === "string") {
       // console.log("byKey[key] typeof string");
-      return new Promise<string>((resolve) => {
+      return new Promise<V>(resolve => {
         // console.log(`------------ resolve ${key} :: ${byKey[key]}`);
-        resolve(byKey[key] as string);
+        resolve(this.store[key] as V);
       });
     }
 
-    return new Promise<string>((resolve) => {
+    return new Promise<V>(resolve => {
       // console.log("+++++++++++++");
-      byKey[key] = resolve;
+      this.store[key] = resolve;
     });
-  };
-
-  return { putValue, getValue };
-};
+  }
+}
