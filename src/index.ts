@@ -6,6 +6,7 @@ export class LookAheadStore<K extends string, V> {
   constructor() {
     this.store = new Map();
     this.eventBus = new EventEmitter();
+    this.eventBus.setMaxListeners(0);
   }
 
   public put(key: K, value: V): void {
