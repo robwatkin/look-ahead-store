@@ -1,8 +1,10 @@
 import { EventEmitter } from "events";
 
-export class LookAheadStore<K extends string, V> {
+export class LookAheadStore<K extends string, V = unknown> {
   public store: Map<K, V>;
-  private eventBus: EventEmitter;
+  protected eventBus: EventEmitter;
+  public unresolved: Set<K> = new Set();
+
   constructor() {
     this.store = new Map();
     this.eventBus = new EventEmitter();
@@ -27,8 +29,20 @@ export class LookAheadStore<K extends string, V> {
       return this.store.get(key) as V;
     } else {
       return new Promise(resolve => {
-        this.eventBus.once(key, resolve);
+        this.unresolved.add(key);
+        this.eventBus.once(key, val => {
+          this.unresolved.delete(key);
+          resolve(val);
+        });
       });
     }
+  }
+
+  /**
+   * Force resolve any hanging promises,
+   * @param resolveValue defaults to `undefined`
+   */
+  public forceResolve(resolveValue?: unknown): void {
+    this.unresolved.forEach(key => this.eventBus.emit(key, resolveValue))
   }
 }
