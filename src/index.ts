@@ -42,7 +42,7 @@ export class LookAheadStore<K extends string, V = unknown> {
    * Force resolve any hanging promises,
    * @param resolveValue defaults to `undefined`
    */
-  public forceResolve(resolveValue?: unknown) {
+  public forceResolve(resolveValue?: unknown): void {
     this.unresolved.forEach(key => this.eventBus.emit(key, resolveValue))
   }
 }
