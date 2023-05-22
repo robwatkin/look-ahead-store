@@ -1,3 +1,4 @@
+import exp from "constants";
 import { LookAheadStore } from "../src/index";
 
 test("adds and retreives one value", async () => {
@@ -55,4 +56,24 @@ test("retreives then adds several value", async () => {
   });
 
   idToUuid.put("3", "three");
+});
+
+
+test("Can force resolve hanging promises", async () => {
+  const las = new LookAheadStore<string>();
+
+  las.get("1").then(value => {
+    // will get resolved after `las.forceResolve()` is called
+    expect(value).toEqual("foo")
+  })
+  expect(las.unresolved.has("1")).toBeTruthy()
+  las.forceResolve("foo")
+  expect(las.unresolved.has("1")).toBeFalsy()
+
+  // ensure `unresolved` is truthful
+  las.get("2").then(value => {
+    expect(value).toEqual("two")
+    expect(las.unresolved.has("2")).toBeFalsy()
+  })
+  las.put("2", "two")
 });
